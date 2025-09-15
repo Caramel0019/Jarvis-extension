@@ -1,0 +1,26 @@
+/* Content script styles */
+#extension-floating-btn {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  background: #3B82F6 !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 10000 !important;
+  font-size: 20px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  font-family: system-ui, -apple-system, sans-serif !important;
+}
+
+#extension-floating-btn:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+}
