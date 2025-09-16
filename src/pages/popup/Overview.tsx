@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'  
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Wallet } from 'lucide-react'
 const Overview = () => {
 
 
@@ -32,14 +32,20 @@ const Overview = () => {
                    <div className="flex flex-1 flex-col justify-between p-6">
                       <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2">
-                          <motion.h3 
+                          <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.1 }} 
-                            className="text-white text-xl font-bold"
+                            className="flex m-1 p-1 justify-between"
                           >
-                            Hello, Alex
-                          </motion.h3>
+                            <h3 className="text-white text-xl font-medium">
+                              Welcome 
+                            </h3>
+                            <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#1A1B3A] px-2 py-1 text-sm font-medium tracking-[0.015em] transition-colors hover:bg-opacity-80">
+                              <Wallet size={20} className='text-[#00D2FF]'/>
+                              <span className="truncate text-white">0x123...abc</span>
+                            </div>
+                          </motion.div>
                           <motion.button
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -50,9 +56,9 @@ const Overview = () => {
                             }}
                             whileTap={{ scale: 0.95 }}
                             onClick={openDashboard}
-                            className="flex w-full mt-8 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#1A1B3A] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-opacity-80"
+                            className="flex w-full mt-8 cursor-pointer items-center justify-center gap-2 px-4 py-4 text-xl font-medium text-white transition-colors glassmorphism-card overflow-hidden border border-white/10 shadow-2xl rounded-xl -all duration-300 transform hover:-translate-y-1"
                           >
-                            <ExternalLink size={16} />
+                            <ExternalLink size={24} />
                             <span className="truncate">Open Main Dashboard</span>
                           </motion.button>
                         </div>
@@ -63,16 +69,38 @@ const Overview = () => {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.8, delay: 0.1 }}  
-                          className="flex flex-col divide-y divide-[#1A1B3A] rounded-xl bg-[#1A1B3A] bg-opacity-50 backdrop-blur-sm"
+                          className="flex flex-col w-full mt-4 cursor-pointer text-xl font-medium text-white transition-colors glassmorphism-card overflow-hidden border border-white/10 shadow-2xl rounded-xl -all duration-300 transform hover:-translate-y-1"
                         >
                           <div className="flex items-center justify-between p-3">
                             <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-400">Total Deployments</span>
+                              <span className="text-md text-gray-400">Total Deployments</span>
                             </div>
-                            <span className="font-bold text-white">3</span>
+                            <span className="font-medium text-white">3</span>
                           </div>
                         </motion.div>
                       </div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                        whileHover={{ 
+                          y: -10
+                         }} 
+                        className="glassmorphism-card mt-8 col-span-1 grid grid-cols-3 gap-4 rounded-xl border border-white/10 p-6 shadow-2xl"
+                      >
+                        <div className="flex flex-col items-center justify-center">
+                          <p className="text-base font-medium text-gray-300">Total</p>
+                          <p className="text-2xl font-bold text-white">10</p>
+                        </div>
+                        <div className="flex flex-col items-center justify-center">
+                          <p className="text-base font-medium text-gray-300">Active</p>
+                          <p className="text-2xl font-bold text-green-400">7</p>
+                        </div>
+                        <div className="flex flex-col items-center justify-center">
+                          <p className="text-base font-medium text-gray-300">Pending</p>
+                          <p className="text-2xl font-bold text-yellow-400">3</p>
+                        </div>
+                      </motion.div>
                    </div>
                </div>
             </div>

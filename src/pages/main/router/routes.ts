@@ -2,7 +2,7 @@ import React from 'react'
 import Home from '../pages/Home'
 import Deployments from '../pages/Deployments'
 import Settings from '../pages/Settings'
-import Profile from '../pages/Profile'
+import History from '../pages/History'
 
 export interface Route {
   path: string
@@ -13,6 +13,6 @@ export interface Route {
 export const routes: Route[] = [
   { path: 'home', component: Home, title: 'Home' },
   { path: 'deployments', component: Deployments, title: 'Deployments' },
-  { path: 'profile', component: Profile, title: 'Profile' },
+  { path: 'history', component: History, title: 'history' },
   { path: 'settings', component: Settings, title: 'Settings' },
 ]

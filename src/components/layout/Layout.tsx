@@ -7,12 +7,12 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return ( 
+    <div className="min-h-screen bg-gray-50"> 
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-6 bg-[#0F0F23]">
+        <main className="flex-1 p-6 bg-[#0F0F23]"> 
           {children}
         </main>
       </div>
