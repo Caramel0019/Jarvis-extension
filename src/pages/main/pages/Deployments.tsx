@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Search as SearchIcon, ArrowLeft, ArrowRight, Plus, Inbox } from 'lucide-react'
 import CreateDeployment from '@/components/modals/CreateDeployment'
 import DeleteDeployment from '@/components/modals/DeleteDeployment'
+import Alert from '@/components/ui/Alert'
 
 const Deployments: React.FC = () => {
   const [deployments] = useState([
@@ -58,6 +59,14 @@ const Deployments: React.FC = () => {
 
   const [isCreateDeploymentOpen, setIsCreateDeploymentOpen] = useState(false)
   const [isDeleteDeploymentOpen, setIsDeleteDeploymentOpen] = useState(false)
+
+  const [alert, setAlert] = useState<{ type: string; message: string } | null>(null)
+   
+  const handleAlert = (type: string, message: string) => {
+    setAlert({ type, message })
+    setTimeout(() => setAlert(null), 5000) // auto close in 5 sec
+  }
+  
 
   return (
     <div className="flex min-h-screen">
@@ -151,7 +160,7 @@ const Deployments: React.FC = () => {
                   <button 
                     className="text-xs font-semibold text-gray-500 hover:text-white transition-colors"
                   >
-                    View Details
+                    View Details 
                   </button>
                   <button 
                     onClick={() => setIsDeleteDeploymentOpen(true)}
@@ -226,6 +235,7 @@ const Deployments: React.FC = () => {
       <CreateDeployment 
         isOPen={isCreateDeploymentOpen}
         onClose={() => setIsCreateDeploymentOpen(false)}
+        onAlert={handleAlert}
       />
       {deployments.map((deployment) => (
         <DeleteDeployment 
@@ -236,6 +246,13 @@ const Deployments: React.FC = () => {
           deployment_id={deployment.deployment_id}
         />
       ))}
+      <Alert 
+        isOpen={!!alert}
+        onClose={() => setAlert(null)}
+        type={alert?.type || ""}
+        message={alert?.message || ""}
+      />
+
     </div>
   )
 }

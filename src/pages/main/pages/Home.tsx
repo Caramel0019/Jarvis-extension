@@ -2,18 +2,27 @@ import { useState } from 'react'
 import { MicIcon, Plus, Server, RefreshCw, Trash2Icon } from 'lucide-react'
 import { motion } from 'framer-motion'
 import CreateDeployment from '@/components/modals/CreateDeployment'
+import Alert from '@/components/ui/Alert'
 
 const Home: React.FC = () => {
 
 
   const [isCreateDeploymentOPen, setIsCreateDeploymentOPen] = useState(false);
   
-    const handleCreateDeploymentOPen = () => {
-      setIsCreateDeploymentOPen(true);
-    }
-    const handleCreateDeploymentClose = () => {
-      setIsCreateDeploymentOPen(false);
-    }
+  const handleCreateDeploymentOPen = () => {
+    setIsCreateDeploymentOPen(true);
+  }
+   const handleCreateDeploymentClose = () => {
+    setIsCreateDeploymentOPen(false);
+  }
+
+  const [alert, setAlert] = useState<{ type: string; message: string } | null>(null)
+     
+  const handleAlert = (type: string, message: string) => {
+    setAlert({ type, message })
+    setTimeout(() => setAlert(null), 5000)
+  }
+
   return (
     <div className="flex-1 overflow-y-auto p-10 ">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -130,6 +139,13 @@ const Home: React.FC = () => {
       <CreateDeployment 
         isOPen={isCreateDeploymentOPen}
         onClose={handleCreateDeploymentClose}
+        onAlert={handleAlert}
+      />
+      <Alert 
+        isOpen={!!alert}
+        onClose={() => setAlert(null)}
+        type={alert?.type || ""}
+        message={alert?.message || ""}
       />
     </div>
   )

@@ -6,14 +6,15 @@ import { useState } from "react";
 interface CreateDeploymentProps {
   isOPen: boolean;
   onClose: () => void;
+  onAlert: (type: "success" | "error" | "info", message: string) => void
 }
 
-const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose }) => {
+const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, onAlert }) => {
   const [step, setStep] = useState(1);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
 
-  // Deployment form fields
+
   const [image, setImage] = useState("nginx:latest");
   const [cpu, setCpu] = useState(1.0);
   const [memory, setMemory] = useState("512MB");
@@ -39,6 +40,7 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose }) 
 
     setIsDeploying(false);
     onClose();
+    onAlert("success", "Deployment created successfully!")
   }
 
   return (
