@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState} from 'react'
 import { motion } from 'framer-motion'  
 import { ExternalLink, Wallet } from 'lucide-react'
 const Overview = () => {
@@ -8,6 +8,11 @@ const Overview = () => {
     chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/main/index.html#home') })
   }
 
+  const [isHover, setIsHover] = useState(false);
+  
+  const handleIsHover = () => {
+    setIsHover(!isHover);
+  }
   return (
     <div className="w-80 h-[600px] bg-[#0F0F23] ">
         <body className="bg-gray-900 ">
@@ -41,9 +46,25 @@ const Overview = () => {
                             <h3 className="text-white text-xl font-medium">
                               Welcome 
                             </h3>
-                            <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#1A1B3A] px-2 py-1 text-sm font-medium tracking-[0.015em] transition-colors hover:bg-opacity-80">
-                              <Wallet size={20} className='text-[#00D2FF]'/>
-                              <span className="truncate text-white">0x123...abc</span>
+                            <div className="relative">
+                              <div 
+                                onClick={handleIsHover}
+                                className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#1A1B3A] px-2 py-1 text-sm font-medium tracking-[0.015em] transition-colors hover:bg-opacity-80"
+                              >
+                                <Wallet size={20} className='text-[#00D2FF]'/>
+                                <span className="truncate text-white">0x123...abc</span>
+                              </div>
+                              {isHover && (
+                                <motion.button
+                                  initial={{ opacity: 0, y: -10}}
+                                  animate={{ opacity: 1, y: 0}}
+                                  exit={{ opacity: 0, y: -10}}
+                                  transition={{ duration: 0.2}} 
+                                  className="absolute top-8 left-0 bg-cyan-500/10 px-4 py-2 text-white font-semibold rounded-xl border backdrop-blur border-cyan-500/20"
+                                >
+                                  Disconnect
+                                </motion.button>
+                              )}
                             </div>
                           </motion.div>
                           <motion.button
@@ -64,14 +85,14 @@ const Overview = () => {
                         </div>
                       </div>
                       <div className="flex flex-col gap-3 mt-8">
-                        <h4 className="text-white text-lg font-bold">Deployment Overview</h4>
+                        <h4 className="text-white text-lg font-bold">Deployments Overview</h4>
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.8, delay: 0.1 }}  
-                          className="flex flex-col w-full mt-4 cursor-pointer text-xl font-medium text-white transition-colors glassmorphism-card overflow-hidden border border-white/10 shadow-2xl rounded-xl -all duration-300 transform hover:-translate-y-1"
+                          className="flex flex-col w-full mt-4 cursor-pointer text-lg font-medium text-white transition-colors glassmorphism-card overflow-hidden border border-white/10 shadow-2xl rounded-xl -all duration-300 transform hover:-translate-y-1"
                         >
-                          <div className="flex items-center justify-between p-3">
+                          <div className="flex items-center justify-between p-2">
                             <div className="flex items-center gap-2">
                               <span className="text-md text-gray-400">Total Deployments</span>
                             </div>
@@ -86,7 +107,7 @@ const Overview = () => {
                         whileHover={{ 
                           y: -10
                          }} 
-                        className="glassmorphism-card mt-8 col-span-1 grid grid-cols-3 gap-4 rounded-xl border border-white/10 p-6 shadow-2xl"
+                        className="glassmorphism-card mt-8 col-span-1 grid grid-cols-3 gap-4 rounded-xl border border-white/10 p-4 shadow-2xl"
                       >
                         <div className="flex flex-col items-center justify-center">
                           <p className="text-base font-medium text-gray-300">Total</p>

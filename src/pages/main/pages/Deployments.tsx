@@ -25,12 +25,6 @@ const Deployments: React.FC = () => {
       status: 'terminated',
       created_at: '2025-09-01T20:58:00.123456Z' 
     },
-    { 
-      deployment_id: 'd111111111', 
-      image: 'mysql:latest', 
-      status: 'terminated',
-      created_at: '2025-09-01T20:58:00.123456Z' 
-    },
   ])
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -64,7 +58,7 @@ const Deployments: React.FC = () => {
    
   const handleAlert = (type: string, message: string) => {
     setAlert({ type, message })
-    setTimeout(() => setAlert(null), 5000) // auto close in 5 sec
+    setTimeout(() => setAlert(null), 10000) 
   }
   
 
@@ -177,7 +171,7 @@ const Deployments: React.FC = () => {
             <Inbox size={48} className="mb-4 text-gray-500" />
             <p className="text-lg font-semibold">No deployments found</p>
             <p className="text-sm text-gray-500">
-              Create your first deployment to get started 🚀
+              Create your first deployment to get started 
             </p>
           </div> 
         )}
@@ -244,6 +238,7 @@ const Deployments: React.FC = () => {
           onClose={() => setIsDeleteDeploymentOpen(false)}
           image={deployment.image}
           deployment_id={deployment.deployment_id}
+          onAlert={handleAlert}
         />
       ))}
       <Alert 

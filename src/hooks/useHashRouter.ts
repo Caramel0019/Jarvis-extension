@@ -18,5 +18,5 @@ export const useHashRouter = () => {
     window.location.hash = route
   }
 
-  return { currentRoute, navigate }
+  return { currentRoute, navigate } 
 }

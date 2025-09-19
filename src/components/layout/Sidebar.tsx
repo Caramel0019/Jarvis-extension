@@ -2,7 +2,7 @@ import React from 'react'
 import { useHashRouter } from '../../hooks/useHashRouter'
 import { routes, Route } from '../../pages/main/router/routes'
 import { motion } from 'framer-motion'
-import { HomeIcon, ServerIcon, SettingsIcon, History } from 'lucide-react'
+import { HomeIcon, ServerIcon, SettingsIcon, DollarSignIcon} from 'lucide-react'
 
 const Sidebar: React.FC = () => {
   const { currentRoute, navigate } = useHashRouter()
@@ -25,10 +25,10 @@ const Sidebar: React.FC = () => {
               }`}
             >
               <span>
-                {route.title === 'Home' && <HomeIcon size={20} className='text-white'/>}
-                {route.title === 'Deployments' && <ServerIcon size={20} className='text-white'/>}
-                {route.title === 'Settings' && <SettingsIcon size={20} className='text-white'/>}
-                {route.title === 'history' && <History size={20} className='text-white'/>}
+                {route.title === 'Home' && <HomeIcon size={18} className='text-white'/>}
+                {route.title === 'Deployments' && <ServerIcon size={18} className='text-white'/>}
+                {route.title === 'Settings' && <SettingsIcon size={18} className='text-white'/>}
+                {route.title === 'Payments' && <DollarSignIcon size={18} className='text-white'/>}
               </span>
               {route.title}
             </motion.a>

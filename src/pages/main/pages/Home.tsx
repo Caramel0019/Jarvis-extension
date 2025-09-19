@@ -8,13 +8,8 @@ const Home: React.FC = () => {
 
 
   const [isCreateDeploymentOPen, setIsCreateDeploymentOPen] = useState(false);
-  
-  const handleCreateDeploymentOPen = () => {
-    setIsCreateDeploymentOPen(true);
-  }
-   const handleCreateDeploymentClose = () => {
-    setIsCreateDeploymentOPen(false);
-  }
+
+  const [isRecording, setIsRecording] = useState(false);
 
   const [alert, setAlert] = useState<{ type: string; message: string } | null>(null)
      
@@ -69,11 +64,24 @@ const Home: React.FC = () => {
           }}
           className="glassmorphism-card col-span-1 flex items-center justify-center rounded-xl border border-white/10 p-6 shadow-2xl"
         >
-          <button 
-            className="group flex h-20 w-20 items-center justify-center rounded-full bg-[#00D2FF] transition-all duration-300 hover:scale-110"
-          >
-            <MicIcon size={32} className='text-gray-800'/>
-          </button>
+          <div className="flex flex-col">
+            <button 
+              onClick={() => setIsRecording(!isRecording)}
+              className={`group flex h-20 w-20 items-center justify-center rounded-full bg-[#00D2FF] transition-all duration-300 hover:scale-110 ${isRecording ? 'animate-pulse' : ''}`}
+            >
+              <MicIcon size={32} className='text-gray-800'/>
+            </button>
+            {isRecording && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.1, delay: 0.1}}
+                className="text-white mt-2 ml-2 "
+              >
+                 Listening...
+              </motion.div>
+            )}
+          </div>
         </motion.div>
       </div>
       <motion.div 
@@ -84,7 +92,7 @@ const Home: React.FC = () => {
       >
         <h2 className="text-2xl font-bold tracking-[-0.015em] text-white">Recent Activity</h2>
         <button 
-          onClick={handleCreateDeploymentOPen}
+          onClick={() => setIsCreateDeploymentOPen(true)}
           className="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#00D2FF] h-12 px-6 text-base font-bold tracking-[0.015em] text-black transition-transform hover:scale-105"
         >
           <Plus size={26} className=''/>
@@ -138,7 +146,7 @@ const Home: React.FC = () => {
       </div>
       <CreateDeployment 
         isOPen={isCreateDeploymentOPen}
-        onClose={handleCreateDeploymentClose}
+        onClose={() => setIsCreateDeploymentOPen(false)}
         onAlert={handleAlert}
       />
       <Alert 

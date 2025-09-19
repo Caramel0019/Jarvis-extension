@@ -8,12 +8,13 @@ interface DeleteDeploymentProps {
   image: string;
   deployment_id: string;
   onClose: () => void;
+  onAlert: (type: "success" | "error" | "info", message: string) => void
 }
 
-const DeleteDeployment: React.FC<DeleteDeploymentProps> = ({ isOPen, onClose, image, deployment_id }) => {
+const DeleteDeployment: React.FC<DeleteDeploymentProps> = ({ isOPen, onClose, image, deployment_id, onAlert }) => {
   
 
-   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -22,6 +23,7 @@ const DeleteDeployment: React.FC<DeleteDeploymentProps> = ({ isOPen, onClose, im
 
     setIsDeleting(false);
     onClose();
+    onAlert("error", "An error occured please try again later!")
   }
 
   return (
