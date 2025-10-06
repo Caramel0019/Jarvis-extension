@@ -1,48 +1,79 @@
-// Content script for interacting with web pages
-console.log('Content script loaded')
+const WEB_API_BASE_URL = 'https://jarvis-web1.vercel.app';
 
-// Listen for messages from popup or background
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'checkPageStatus') {
-    // Example: Check if current page has certain elements
-    const hasTargetElements = document.querySelectorAll('[data-extension-target]').length > 0
-    sendResponse({ hasTargetElements })
-  }
-})
-
-// Example: Add a floating button to pages
-const addFloatingButton = () => {
-  const button = document.createElement('div')
-  button.id = 'extension-floating-btn'
-  button.innerHTML = '🚀'
-  button.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #3B82F6;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10000;
-    font-size: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-  `
-  
-  button.addEventListener('click', () => {
-    chrome.runtime.sendMessage({ action: 'openMainPage' })
-  })
-  
-  document.body.appendChild(button)
+interface MessageData {
+  action: string;
+  data?: any;
+  token?: string;
 }
 
-// Check if extension is enabled before adding UI elements
-chrome.storage.local.get(['isEnabled'], (result) => {
-  if (result.isEnabled) {
-    addFloatingButton()
+// Generate secure token for session
+const generateToken = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+};
+
+// Store current session token
+let sessionToken: string | null = null; 
+
+// Listen for messages from extension popup
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "open_auth") {
+    sessionToken = generateToken();
+    
+    const authUrl = `${WEB_API_BASE_URL}/auth?token=${sessionToken}`;
+    window.open(authUrl, "auth_window", "width=450,height=600");
+
+    // Send init message to webapp
+    setTimeout(() => {
+      window.postMessage({
+        source: "my-extension",
+        type: "init",
+        token: sessionToken
+      }, "*");
+    }, 1000);
+    
+    sendResponse({ status: "auth_opened", token: sessionToken });
   }
-})
+  
+  if (request.action === "open_payment") {
+    sessionToken = generateToken();
+    const { amount, wallet } = request.data;
+    const paymentUrl = `${WEB_API_BASE_URL}/payment?token=${sessionToken}&amount=${amount}&wallet=${wallet}`;
+    window.open(paymentUrl, "payment_window", "width=450,height=600");
+    
+    sendResponse({ status: "payment_opened", token: sessionToken });
+  }
+  
+  return true;
+});
+
+// Listen for messages from webapp
+window.addEventListener("message", (event) => {
+  // Verify origin
+  if (event.origin !== `${WEB_API_BASE_URL}`) return;
+  
+  const message = event.data;
+  if (message.source !== "my-webapp") return;
+  
+  // Forward to extension popup
+  chrome.runtime.sendMessage({
+    type: message.type,
+    data: message.data,
+    timestamp: message.timestamp
+  });
+});
+
+// Inject security script to prevent direct access
+const securityScript = document.createElement("script");
+securityScript.textContent = `
+  // Block direct navigation to protected routes
+  if (window.location.pathname === '/auth' || window.location.pathname === '/payment') {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    
+    if (!token || !window.opener) {
+      window.location.href = '/';
+    }
+  }
+`;
+document.documentElement.appendChild(securityScript);
+securityScript.remove();

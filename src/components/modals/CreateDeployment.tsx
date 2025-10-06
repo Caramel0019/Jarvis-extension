@@ -1,24 +1,32 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import Modal from "../ui/Modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useApi } from "@/hooks/useApi"; 
 
-interface CreateDeploymentProps {
+interface CreateDeploymentProps { 
   isOPen: boolean;
   onClose: () => void;
   onAlert: (type: "success" | "error" | "info", message: string) => void
 }
 
 const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, onAlert }) => {
+  const { createDeployment, estimatePricing, loading } = useApi();
+  
+  // States
   const [step, setStep] = useState(1);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
+  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+  const [estimating, setEstimating] = useState(false);
 
-
+  // Form Fields 
   const [image, setImage] = useState("nginx:latest");
   const [cpu, setCpu] = useState(1.0);
-  const [memory, setMemory] = useState("512MB");
-  const [storage, setStorage] = useState("1GB");
+  const [memory, setMemory] = useState(512);
+  const [memoryUnit, setMemoryUnit] = useState("MB");
+  const [storage, setStorage] = useState(1);
+  const [storageUnit, setStorageUnit] = useState("GB");
   const [ports, setPorts] = useState("80");
   const [paymentAmount, setPaymentAmount] = useState(10.0);
   const [paymentCurrency, setPaymentCurrency] = useState("USD");
@@ -33,17 +41,54 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, on
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
+  // Fetch price estimate when configuration changes
+  useEffect(() => {
+    if (step === 3 && selectedType) {
+      fetchPriceEstimate();
+    }
+  }, [step, cpu, memory, memoryUnit, storage, storageUnit]);
+
+  const fetchPriceEstimate = async () => {
+    setEstimating(true);
+    const result = await estimatePricing({
+      cpu: cpu,
+      memory: `${memory}${memoryUnit}`,
+      storage: `${storage}${storageUnit}`
+    });
+    
+    if (result) {
+      setEstimatedPrice(result.pricing.estimated_monthly_cost_usd);
+      setPaymentAmount(result.pricing.estimated_monthly_cost_usd);
+    }
+    setEstimating(false);
+  };
+
   const handleDeploy = async () => {
     setIsDeploying(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    const deploymentData = {
+      image,
+      cpu: cpu,
+      memory: `${memory}${memoryUnit}`,
+      storage: `${storage}${storageUnit}`,
+      ports: ports.split(',').map(p => parseInt(p.trim())),
+      payment_amount: paymentAmount,
+      payment_currency: paymentCurrency
+    };
+
+    const result = await createDeployment(deploymentData);
 
     setIsDeploying(false);
-    onClose();
-    onAlert("success", "Deployment created successfully!")
-  }
+    
+    if (result) {
+      onClose();
+      onAlert("success", `Deployment created successfully! ID: ${result.deployment_id}`);
+    } else {
+      onAlert("error", "Failed to create deployment. Please try again.");
+    }
+  };
 
-  return (
+  return ( 
     <AnimatePresence>
       {isOPen && (
         <Modal>
@@ -53,7 +98,7 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, on
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ duration: 0.4 }}
-            className="w-[500px] max-w-4xl h-[550px] flex flex-col glassmorphism-card overflow-hidden border border-white/10 shadow-2xl rounded-xl duration-300"
+            className={`w-[500px] max-w-4xl h-[550px] border-black/10 text-white bg-gray-900 opacity-5 flex flex-col  glassmorphism-card overflow-hidden border shadow-xl rounded-xl duration-300`}
           >
             {/* Header */}
             <header className="flex items-center justify-between p-6 border-b border-white/10">
@@ -158,7 +203,7 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, on
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-white/70 mb-1">CPU</label>
+                          <label className="block text-white/70 mb-1">CPU Cores</label>
                           <input
                             type="number"
                             step="0.1"
@@ -167,30 +212,56 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, on
                             className="w-full px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
                           />
                         </div>
+                        <br />
                         <div>
                           <label className="block text-white/70 mb-1">Memory</label>
-                          <input
-                            value={memory}
-                            onChange={(e) => setMemory(e.target.value)}
-                            className="w-full px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
-                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={memory}
+                              onChange={(e) => setMemory(parseFloat(e.target.value))}
+                              className="flex-1 px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
+                            />
+                            <select
+                              value={memoryUnit}
+                              onChange={(e) => setMemoryUnit(e.target.value)}
+                              className="px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
+                            >
+                              <option value="MB">MB</option>
+                              <option value="GB">GB</option>
+                            </select>
+                          </div>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-white/70 mb-1">Storage</label>
-                          <input
-                            value={storage}
-                            onChange={(e) => setStorage(e.target.value)}
-                            className="w-full px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
-                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={storage}
+                              onChange={(e) => setStorage(parseFloat(e.target.value))}
+                              className="flex-1 px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
+                            />
+                            <select
+                              value={storageUnit}
+                              onChange={(e) => setStorageUnit(e.target.value)}
+                              className="px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
+                            >
+                              <option value="MB">MB</option>
+                              <option value="GB">GB</option>
+                              <option value="TB">TB</option>
+                            </select>
+                          </div>
                         </div>
+                        <br />
                         <div>
                           <label className="block text-white/70 mb-1">Ports</label>
                           <input
                             value={ports}
                             onChange={(e) => setPorts(e.target.value)}
                             className="w-full px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
+                            placeholder="80, 443"
                           />
                         </div>
                       </div>
@@ -210,11 +281,26 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, on
                     <h3 className="text-xl font-bold mb-4 text-white">
                       Payment Information
                     </h3>
+                    
+                    {estimating && (
+                      <div className="mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded text-cyan-300 text-sm">
+                        Calculating estimated price...
+                      </div>
+                    )}
+                    
+                    {estimatedPrice !== null && !estimating && (
+                      <div className="mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded">
+                        <p className="text-cyan-300 text-sm">Estimated monthly cost</p>
+                        <p className="text-white text-2xl font-bold">${estimatedPrice.toFixed(2)}</p>
+                      </div>
+                    )}
+                    
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-white/70 mb-1">Amount</label>
                         <input
                           type="number"
+                          step="0.01"
                           value={paymentAmount}
                           onChange={(e) =>
                             setPaymentAmount(parseFloat(e.target.value))
@@ -224,11 +310,15 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, on
                       </div>
                       <div>
                         <label className="block text-white/70 mb-1">Currency</label>
-                        <input
+                        <select
                           value={paymentCurrency}
                           onChange={(e) => setPaymentCurrency(e.target.value)}
                           className="w-full px-3 py-2 rounded bg-gray-900 border border-white/10 text-white"
-                        />
+                        >
+                          <option value="USD">USD</option>
+                          <option value="EUR">EUR</option>
+                          <option value="GBP">GBP</option>
+                        </select>
                       </div>
                     </div>
                   </motion.div>
@@ -247,15 +337,15 @@ const CreateDeployment: React.FC<CreateDeploymentProps> = ({ isOPen, onClose, on
                       Review & Confirm
                     </h3>
                     <div className="space-y-4">
-                      <div className="bg-gray-900 p-4 rounded-lg text-white/80">
+                      <div className="bg-gray-900 p-4 rounded-lg text-white/80 space-y-2">
+                        <p><span className="font-bold text-white">Type:</span> {selectedType}</p>
                         <p><span className="font-bold text-white">Image:</span> {image}</p>
-                        <p><span className="font-bold text-white">CPU:</span> {cpu}</p>
-                        <p><span className="font-bold text-white">Memory:</span> {memory}</p>
-                        <p><span className="font-bold text-white">Storage:</span> {storage}</p>
+                        <p><span className="font-bold text-white">CPU:</span> {cpu} cores</p>
+                        <p><span className="font-bold text-white">Memory:</span> {memory}{memoryUnit}</p>
+                        <p><span className="font-bold text-white">Storage:</span> {storage}{storageUnit}</p>
                         <p><span className="font-bold text-white">Ports:</span> {ports}</p>
-                        <p>
-                          <span className="font-bold text-white">Payment:</span> {paymentAmount}{" "}
-                          {paymentCurrency}
+                        <p className="pt-2 border-t border-white/10">
+                          <span className="font-bold text-white">Payment:</span> {paymentAmount.toFixed(2)} {paymentCurrency}
                         </p>
                       </div>
                     </div>

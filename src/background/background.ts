@@ -23,8 +23,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 })
 
-// Handle extension icon click
 chrome.action.onClicked.addListener((tab) => {
-  // This will only fire if no popup is set in manifest
   chrome.tabs.create({ url: chrome.runtime.getURL('index.html#home') })
 })

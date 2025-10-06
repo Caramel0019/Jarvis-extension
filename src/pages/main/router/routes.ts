@@ -1,8 +1,9 @@
 import React from 'react'
-import Home from '../pages/Home'
+import Dashboard from '../pages/Dashboard'
 import Deployments from '../pages/Deployments'
 import Settings from '../pages/Settings'
 import Payments from '../pages/Payments'
+
 
 export interface Route {
   path: string
@@ -11,7 +12,7 @@ export interface Route {
 }
 
 export const routes: Route[] = [ 
-  { path: 'home', component: Home, title: 'Home' },
+  { path: 'dashboard', component: Dashboard, title: 'Dashboard' },
   { path: 'deployments', component: Deployments, title: 'Deployments' },
   { path: 'payments', component: Payments, title: 'Payments' },
   { path: 'settings', component: Settings, title: 'Settings' },

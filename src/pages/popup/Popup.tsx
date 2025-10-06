@@ -1,12 +1,21 @@
-import React from 'react'
-import Auth from './Auth'
 import Overview from './Overview'
+import { ThemeProvider } from '@/components/layout/ThemeContext'
+import { CheckAuth } from '@/hooks/checkAuth'
+import { AuthProvider } from '@/hooks/AuthContext'
 
 const Popup = () => {
   return (
     <div>
-        <Overview/>
-    </div>
+      <CheckAuth>
+        {(logout) => (
+          <AuthProvider logout={logout}> 
+            <ThemeProvider>
+              <Overview/> 
+           </ThemeProvider>
+          </AuthProvider>
+        )}
+      </CheckAuth>
+    </div> 
   )
 }
 
