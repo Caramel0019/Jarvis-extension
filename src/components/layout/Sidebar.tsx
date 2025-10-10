@@ -20,7 +20,7 @@ const Sidebar: React.FC = () => {
         <div className="px-4">
           {/* Sidebar Contents */}
           {routes
-            .filter((route: Route) => route.title.toLowerCase() !== 'auth')
+            .filter((route: Route) => route.title.toLowerCase() !== 'private')
             .map((route: Route) => (
               <motion.a
                 initial={{ opacity: 0, x: -20 }}

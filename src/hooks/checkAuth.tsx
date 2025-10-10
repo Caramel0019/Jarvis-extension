@@ -199,7 +199,7 @@ export const CheckAuth = ({ children }: CheckAuthProps) => {
   // loading state
   if (isChecking) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-[600px] min-w-80 bg-gray-50">
         <div className="text-center p-8">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600 mb-4"></div>
           <p className="text-gray-700 font-medium">{status}</p>
@@ -209,28 +209,26 @@ export const CheckAuth = ({ children }: CheckAuthProps) => {
   }
 
   // connect wallet screen
-  if (!isAuthenticated) {
+  if (!isAuthenticated) { 
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="rounded-2xl shadow-xl p-8 max-w-md w-full mx-4">
+      <div className="flex items-center justify-center min-h-[600px] min-w-80 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="rounded-2xl glassmorphism-card border-1 border-red-500 p-8 max-w-md w-full mx-4">
           <div className="text-center mb-6">
-            <div className="sm:w-10 sm:h-10 sx:w-10 sx:h-10 w-16 h-16 bg-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-              </svg>
+            <div className="rounded-full flex items-center justify-center my-16 mx-auto mb-4">
+              <img src="public/icons/icon128.png" alt="Jarvis" className="w-8 h-8" />
             </div>
             <h1 className="text-2xl sm:text-sm xs:text-xs font-bold text-gray-900 mb-2">
-              Connect Your Wallet
+              Welcome To Jarvis
             </h1>
             <p className="sm:text-sm xs:text-xs text-gray-600 mb-6">
               {status}
             </p>
           </div>
-
+          <br />
           <button
             onClick={initiateAuth}
             disabled={api.loading}
-            className="w-full bg-cyan-600 hover:bg-cyan-700 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            className="w-full bg-cyan-500 hover:bg-cyan-600 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
           >
             {api.loading ? (
               <>
@@ -239,10 +237,7 @@ export const CheckAuth = ({ children }: CheckAuthProps) => {
               </>
             ) : (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <span className='sm:text-sm xs:text-xs'>Connect </span>
+                <span className='sm:text-sm xs:text-xs'>Connect Wallet</span>
               </>
             )}
           </button>
@@ -252,18 +247,12 @@ export const CheckAuth = ({ children }: CheckAuthProps) => {
               <p className="text-red-800 text-sm sm:text-sm xs:text-xs">{api.error}</p>
             </div>
           )}
-
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              Jarvis Extension
-            </p>
-          </div>
         </div>
       </div>
     );
   }
 
-  // Render authenticated app
+  // Authenticated app
   return (
     <>
       {children(handleLogout)}

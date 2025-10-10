@@ -105,7 +105,7 @@ export const Cards = ({ onVoiceCommandResult }: CardsProps) => {
             <p className={`text-base font-medium ${ theme === 'light' ? 'text-gray-900' : 'text-gray-300'}`}>Total Deployments</p>
             <p className={`text-2xl font-bold ${ theme === 'light' ? 'text-gray-600' : 'text-white'}`}>{deploymentCount}</p>
           </div>
-        </motion.div>
+        </motion.div> 
 
         {/* Voice Command Card */}
         <motion.div
